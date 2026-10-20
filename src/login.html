@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AdaptaAmigo - Iniciar sesión</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
+  <div id="app-header"></div>
+
+  <main class="flex-grow max-w-md mx-auto px-4 py-16 w-full">
+    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center space-y-6">
+      <h2 class="text-2xl font-bold text-gray-800">Iniciar sesión</h2>
+      <p class="text-sm text-gray-500">Ingresa tus credenciales para acceder</p>
+      <form onsubmit="handleLogin(event)" class="space-y-4 text-left">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Correo Electrónico</label>
+          <input id="login-email" type="email" required placeholder="correo@ejemplo.com" class="w-full border rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Contraseña</label>
+          <input id="login-pass" type="password" required placeholder="••••••••" class="w-full border rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
+        </div>
+        <p id="form-error" class="hidden text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg p-2"></p>
+        <button type="submit" class="w-full bg-emerald-600 text-white font-semibold py-2.5 rounded-lg hover:bg-emerald-700 transition">Entrar</button>
+      </form>
+      <p class="text-xs text-gray-500">¿No tienes cuenta? <a href="registro.html" onclick="this.href='registro.html'+location.search" class="text-emerald-600 font-semibold underline">Regístrate aquí</a></p>
+    </div>
+  </main>
+
+  <div id="app-footer"></div>
+  <script src="js/app.js"></script>
+  <script>
+    initLayout('login.html');
+    function handleLogin(e) {
+      e.preventDefault();
+      const r = loginUser(
+        document.getElementById('login-email').value,
+        document.getElementById('login-pass').value
+      );
+      if (!r.ok) { showFormError(r.msg); return; }
+      window.location.href = nextPage();
+    }
+  </script>
+</body>
+</html>

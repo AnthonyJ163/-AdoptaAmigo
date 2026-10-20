@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AdaptaAmigo - Detalle</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
+  <div id="app-header"></div>
+
+  <main class="flex-grow max-w-4xl mx-auto px-4 py-10 w-full">
+    <a href="catalogo.html" class="text-emerald-600 text-sm font-semibold mb-4 inline-block hover:underline">← Volver al catálogo</a>
+    <div id="detail-box"></div>
+  </main>
+
+  <div id="app-footer"></div>
+  <script src="js/app.js"></script>
+  <script>
+    initLayout('catalogo.html');
+
+    const EXTRA_IMG = 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=80';
+    const pet = getPets().find(p => p.id === getQueryId());
+    const box = document.getElementById('detail-box');
+
+    function setMain(src) { document.getElementById('detail-main-img').src = src; }
+
+    if (!pet) {
+      box.innerHTML = '<p class="text-gray-500 text-sm">Mascota no encontrada.</p>';
+    } else {
+      box.innerHTML = `
+        <div class="bg-white p-6 rounded-2xl border border-gray-200 grid grid-cols-1 md:grid-cols-2 gap-8 shadow-sm">
+          <div>
+            <img id="detail-main-img" src="${pet.img}" class="w-full h-80 object-cover rounded-xl shadow mb-3">
+            <div class="grid grid-cols-3 gap-2">
+              <img src="${pet.img}" onclick="setMain('${pet.img}')" class="h-16 w-full object-cover rounded-lg border-2 border-emerald-600 cursor-pointer">
+              <img src="${EXTRA_IMG}" onclick="setMain('${EXTRA_IMG}')" class="h-16 w-full object-cover rounded-lg cursor-pointer opacity-70 hover:opacity-100">
+            </div>
+          </div>
+          <div class="space-y-4 flex flex-col justify-between">
+            <div>
+              <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-3 py-1 rounded-full">Disponible</span>
+              <h2 class="text-3xl font-bold text-gray-900 mt-2">${pet.nombre}</h2>
+              <p class="text-sm text-gray-500">${pet.especie} · ${pet.edad} · ${pet.ubicacion}</p>
+              <hr class="my-3">
+              <h4 class="font-bold text-gray-800 mb-1">Sobre la mascota:</h4>
+              <p class="text-sm text-gray-600 leading-relaxed">${pet.desc}</p>
+            </div>
+            <a href="solicitud.html?id=${pet.id}" class="block text-center w-full bg-emerald-600 text-white font-semibold py-3 rounded-xl hover:bg-emerald-700 shadow transition">Solicitar adopción</a>
+          </div>
+        </div>`;
+    }
+  </script>
+</body>
+</html>

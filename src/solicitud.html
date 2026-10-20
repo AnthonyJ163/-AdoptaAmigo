@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AdaptaAmigo - Solicitud de adopción</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
+  <div id="app-header"></div>
+
+  <main class="flex-grow max-w-xl mx-auto px-4 py-10 w-full">
+    <div class="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
+      <h2 class="text-2xl font-bold text-center text-gray-800 mb-2">Solicitud de Adopción</h2>
+      <p class="text-sm text-gray-500 text-center mb-6">Estás aplicando para adoptar a: <b id="solic-pet-name" class="text-emerald-600"></b></p>
+      <form onsubmit="submitApplication(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-700 mb-1">Tu Nombre Completo</label>
+          <input id="solic-name" type="text" required placeholder="Ingresa tu nombre" class="w-full border rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-700 mb-1">Teléfono de Contacto</label>
+          <input id="solic-phone" type="text" required placeholder="+51 987 654 321" class="w-full border rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-700 mb-1">¿Por qué deseas adoptar a esta mascota?</label>
+          <textarea id="solic-reason" rows="3" required placeholder="Cuéntanos sobre tu hogar..." class="w-full border rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+        </div>
+        <p id="form-error" class="hidden text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg p-2"></p>
+        <button type="submit" class="w-full bg-emerald-600 text-white font-semibold py-3 rounded-xl hover:bg-emerald-700 shadow transition">Enviar Solicitud</button>
+      </form>
+    </div>
+  </main>
+
+  <div id="app-footer"></div>
+  <script src="js/app.js"></script>
+  <script>
+    initLayout('catalogo.html');
+    requireLogin();
+
+    const pet = getPets().find(p => p.id === getQueryId());
+    if (!pet) {
+      window.location.href = 'catalogo.html';
+    } else {
+      document.getElementById('solic-pet-name').innerText = pet.nombre;
+      const user = getUser();
+      if (user) document.getElementById('solic-name').value = user.name;
+    }
+
+    function submitApplication(e) {
+      e.preventDefault();
+      try {
+        const user = getUser();
+        if (!user) { requireLogin(); return; }
+        if (!pet) { showFormError('No se encontró la mascota. Vuelve al catálogo.'); return; }
+        const apps = getApps();
+        const before = apps.length;
+        apps.push({
+          owner: user.email,
+          pet: pet,
+          applicant: document.getElementById('solic-name').value,
+          phone: document.getElementById('solic-phone').value,
+          reason: document.getElementById('solic-reason').value,
+          date: new Date().toLocaleDateString(),
+          status: 'En revisión'
+        });
+        saveApps(apps);
+        if (getApps().length !== before + 1) {
+          showFormError('No se pudo guardar la solicitud: tu navegador bloquea el almacenamiento local.');
+          return;
+        }
+        alert('¡Solicitud enviada correctamente!');
+        window.location.href = 'mis-solicitudes.html';
+      } catch (err) {
+        showFormError('Ocurrió un error: ' + err.message);
+      }
+    }
+  </script>
+</body>
+</html>
